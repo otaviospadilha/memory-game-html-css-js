@@ -57,7 +57,9 @@ const decks = [
             ]
             },
 
-        background: "linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('images/background/board-background-one-piece.jpg')"
+        background: "linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('images/background/board-background-one-piece.jpg')",
+        
+        gifBackground: "linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url('https://i.pinimg.com/originals/fd/e1/0f/fde10f0a706b219627dfcd34a6a1c939.gif')"
     },
     {
         title: 'Pokemon',
@@ -115,7 +117,9 @@ const decks = [
                 },
             ]
         },
-        background: "linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('images/background/board-background-pokemon.jpg')"
+        background: "linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('images/background/board-background-pokemon.jpg')",
+        
+        gifBackground: "linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url('https://media3.giphy.com/media/8UGGp7rQvfhe63HrFq/200.gif')"
     },
     {
         title: 'Yu-Gi-Oh',
@@ -174,7 +178,9 @@ const decks = [
             ]   
         },
 
-        background: "linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('images/background/board-background-yu-gi-oh.png')"
+        background: "linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('images/background/board-background-yu-gi-oh.png')",
+        
+        gifBackground: "linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url('https://thumbs.gfycat.com/JadedDescriptiveEland-size_restricted.gif')"
     }
 ]
 let currentDeck
@@ -227,7 +233,6 @@ const Game = {
                 disableCards()
                 checkEndGame++
                 if(checkEndGame === cards.length / 2){
-                    console.log('acabou')
                     checkEndGame = 0
                     finishScreen();
                 } 
@@ -281,18 +286,21 @@ const Game = {
             let seconds = ((Date.now() - timeNow) / 1000).toFixed(0)
             if (seconds >= 60 ){
                 let minutes = parseInt(seconds / 60)
-                console.log(minutes)
                 seconds %= 60
+                if(minutes === 1){
+                    return `${minutes} minuto ${seconds} segundos`
+                }
                 return `${minutes} minutos ${seconds} segundos`
             }
 
-            return seconds
+            return `${seconds} segundos`
         }
 
         function finishScreen() {
             timeOver = converterTime()
             setTimeout(() => {
                 document.querySelector('.finish').classList.remove('disable')  
+                document.querySelector('.finish-content').style.backgroundImage = `${decks[index].gifBackground}`
                 document.getElementById('timeValue').innerHTML = timeOver
             }, 1000)
             choose()
