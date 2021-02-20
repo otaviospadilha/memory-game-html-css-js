@@ -177,9 +177,10 @@ const decks = [
         background: "linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)), url('images/background/board-background-yu-gi-oh.png')"
     }
 ]
-
+let currentDeck
 const Game = {
     start(deck) {
+        currentDeck = deck
         const index = decks.findIndex(item => {
             return item.title === deck
         })
@@ -203,6 +204,9 @@ const Game = {
         let lockBoard = false
         let checkEndGame = 0
 
+        const timeNow = Date.now()
+        let timeOver
+
         function flipCard() {
             if(lockBoard) return
             if(this === firstCard) return
@@ -225,6 +229,7 @@ const Game = {
                 if(checkEndGame === cards.length / 2){
                     console.log('acabou')
                     checkEndGame = 0
+                    finishScreen();
                 } 
                 return
             }
@@ -253,31 +258,69 @@ const Game = {
             [hasFlippedCard, lockBoard] = [false, false]
             [firstCard, secondCard] = [null, null]
         }
+
+        function quitBoard() {
+            location.reload()
+        }
+
+        function reloadBoard() {
+            document.querySelector('.finish').classList.add('disable')
+            
+            Game.start(currentDeck)
+        }
+
+        function choose() {
+            const restart = document.querySelector('.restart')
+            restart.addEventListener('click', reloadBoard)
+
+            const quit = document.querySelector('.change-deck')
+            quit.addEventListener('click', quitBoard)
+        }
+
+        function converterTime() {
+            let seconds = ((Date.now() - timeNow) / 1000).toFixed(0)
+            if (seconds >= 60 ){
+                let minutes = parseInt(seconds / 60)
+                console.log(minutes)
+                seconds %= 60
+                return `${minutes} minutos ${seconds} segundos`
+            }
+
+            return seconds
+        }
+
+        function finishScreen() {
+            timeOver = converterTime()
+            setTimeout(() => {
+                document.querySelector('.finish').classList.remove('disable')  
+                document.getElementById('timeValue').innerHTML = timeOver
+            }, 1000)
+            choose()
+        }
+        
     },
 
-}
-
-const boardTemplate = function(card, backcard) {
-    return `
-    <div class="card" data-card = ${card.name}>
-            <img class="front-card" src= ${card.image} alt="frente da carta">
-            <img class="back-card" src= ${backcard} alt="verso da carta" >
-    </div>
-    `
 }
 
 const DOM = {
 
     renderBoard(backCard, cards) {
-            const $screen = document.querySelector('.memory-game')
-            $screen.innerHTML = cards.map(card => {
-                return boardTemplate(card, backCard)
-            }).join('')
+        const $screen = document.querySelector('.memory-game')
+        $screen.innerHTML = cards.map(card => {
+            return DOM.board(card, backCard)
+        }).join('')
+    },
+
+    board(card, backcard) {
+        return `
+        <div class="card" data-card = ${card.name}>
+                <img class="front-card" src= ${card.image} alt="frente da carta">
+                <img class="back-card" src= ${backcard} alt="verso da carta" >
+        </div>
+        `
     },
 
 }
-
-
 
 const Board = {
     shuffle(cards) {
